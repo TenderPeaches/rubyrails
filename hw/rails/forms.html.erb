@@ -1,0 +1,66 @@
+<!-- main form helper -->
+<%= form_with do |form| %>
+    Form contents
+<% end %>
+    <!-- creates a <form> that POSTs to the current page "/"as well as 
+        an <input type="hidden" name="authenticity_token"> without which 
+        non-GET type forms cannot be submitted as a measure aganist XSRF -->
+
+<% # to test in console: app.get "127.0.0.1"; app.controller.view_context.form_with [...] %>
+
+<!-- sample form -->
+<% form_with url: "/search", method: :get do |form| %>
+    <!-- sample inputs -->
+    <%= form.label :query, "Search: " %>
+    <%= form.text_field :query %>
+    <%= form.submit "Search" %>
+    <%= form.check_box :active %>
+    <%= form.radio_button :type, "user" %>
+    <%= form.radio_button :type, "admin" %>
+    <%= form.text_area :details, :size="70x5" %>
+    <%= form.hidden_field :some_id, value: "1" %>
+    <%= form.password_field :password %>
+    <%= form.number_field :age in 0..150, step: 1 %>
+    <%= form.range_field :percent, in 1..100 %>
+    <%= form.date_field :born_on %>
+    <%= form.time_field :start_time %>
+    <%= form.datetime_local_field :event %>
+    <%= form.month_field :month %>
+    <%= form.week_field :week %>
+    <%= form.search_field :lookup %>
+    <%= form.email_field :email %>
+    <%= form.telephone_field :phone %>
+    <%= form.url_field :page %>
+    <%= form.color_field :theme %>
+    <%= form.time_zone_select :time_zone %>
+    <%= form.file_field :doc %>     <!-- form enctype must be set to multipart/form-data, done automatically if file_field is used inside a form_with -->
+<% end %>
+
+<!-- use the :model argument of `form_with` to bind the form builder object to a model, 
+    populating the form's values with that model's -->
+<%= form_with model: @article do |form| %>
+    <%= form.text_field :title %>
+    <%= form.submit %>
+    <!-- can use fields_for on a model association to do the same without wrapping it in a <form> tag -->
+    <%= fields_for :stock, @article.stock do |stock_form| %>
+        <%= stock_form.number_field :quantity %>
+    <% end %>
+    <!-- if model association is [0,n], fields_for iterates over each obj in the collection and outputs the given fields once per record -->
+    <%= fields_for :parts do |parts_form| %>
+        <!-- use form.object to refer to the current iterated object -->
+        <%= print parts_form.object.name %>
+    <% end %>
+<% end %>
+
+<!-- select fields -->
+<%= form.select :city, [["Berlin", "BE"], ["Madrid", "MA"], ["Barcelona", "BA"]], selected: "BA" %>
+<%= form.select :city, {
+    "Germany" => [["Berlin", "BE"]],
+    "Spain" => [["Madrid", "MA"], ["Barcelona", "BA"]]
+} %> <!-- grouping options -->
+<%= form.collection_select :city_id, City.order(:name), :id, :name %> <!-- select from a model collection -->
+<%= form.collection_radio_buttons :city_id, City.order(:name), :id, :name %> <!-- radio buttons from a model collection -->
+<%= form.collection_check_boxes :city_id, City.order(:name), :id, :name %> <!-- check boxes from a model collection -->
+
+<!-- to use form helpers from the controllers: -->
+<%= ActionController::Base.helpers.form_with [...] %>

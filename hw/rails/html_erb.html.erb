@@ -1,0 +1,48 @@
+<% print "evaluate this ruby code" # keep it short!; also does not actually output anything unless its printed or w/e %>   
+<%= "evaluate this code and return its value " %>
+<%# comment %>
+<%= "all erb stuff is evaluated before the HTML is sent over to the browser" %>
+
+<!-- asset tag helpers -->
+<%= auto_discovery_link_tag(:rss, {action: "feed"},
+  {title: "RSS Feed", type: "mime-type", rel: "rel="}) %>
+<%= javascript_include_tag "main" %> <!-- looks in /assets/javascripts/ -->
+<%= stylesheet_link_tag "main" "alt" %> <!-- looks in /assets/stylesheets from app/assets, lib/assets or vendor/assets -->
+<%= image_tag "some.gif", alt: "descr", id: "id", class: "img" %> <!-- looks in public/images -->
+<%= video_tag ['gif.mp4', 'gif2.mp4'] %> <!-- looks in public/video -->
+<%= audio_tag "song.mp3" %> <!-- looks in public/audio -->
+
+<!-- within this context yield identifies a section where content from the view should be inserted -->
+<html>
+    <head>
+    <%= yield :head %>
+    </head>
+    <body>
+    <%= yield %>
+    </body>
+</html>
+
+<% if something_is_true %>
+    <div>Display stuff</div>
+<% else %>
+    <div>or don't</div>
+<% end %>
+
+<!-- inserted at yield :head,
+    pure ruby, so can be inserted anywhere -->
+<% content_for :head do %>
+    <title>Page</title>
+<% end %>
+
+<%= render "menu" %> <!-- pulls from app/views/shared/_menu.html.erb -->
+<%= render partial: "header", layout: "large-header" %> <!-- custom layout, same folder as partial -->
+<%= render partial: "form", locals: {zone: @zone} %> <!-- can use local variables -->
+<%= render partial: "form", object: @form_data %> <!-- partial has access to variable `form` that has value @form_data -->
+<%= render @model %> <!-- assuming @model is instance of Model, uses _model.html.erb and uses local variable `model` to refer to @model -->
+<%= render partial: "list", collection: @models %> <!-- loops over @models and renders _list.html.erb once per model, with local variable `model` referring to the iterated object -->
+    <!-- empty collection returns nil -->
+    <!-- can use :as option to define the local variable used to contain the iterated object -->
+<%= render @models %> <!-- shorthand for collection partial, assuming @models is a collection -->
+<%= render partial: @models, spacer_template: "model_spacer" %> <!-- separate each model partial with the model_spacer partial, can also use :layout -->
+
+<% tag.input type: text, id: "tagId" %>
